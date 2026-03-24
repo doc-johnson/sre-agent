@@ -4,7 +4,7 @@ AI agent that investigates production incidents using a ReAct (Reason + Act) loo
 
 The agent receives an alert, forms hypotheses, queries Prometheus metrics and container logs through function calling, and produces a structured investigation report with root cause, evidence, and recommendations. Everything streams in real-time via SSE.
 
-https://github.com/doc-johnson/sre-agent/raw/main/demo.mp4
+![Demo](demo.gif)
 
 ## How It Works
 
