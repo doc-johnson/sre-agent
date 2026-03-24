@@ -1,0 +1,46 @@
+services:
+  agent-api:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - TEST_APP_URL=http://test-app:8080
+      - PROMETHEUS_URL=http://prometheus:9090
+    volumes:
+      - agent_data:/app/data
+    depends_on:
+      - test-app
+      - prometheus
+
+  test-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.infra
+    ports:
+      - "8080:8080"
+    command: uvicorn infra.app:app --host 0.0.0.0 --port 8080
+
+  traffic-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile.infra
+    command: python -m infra.traffic
+    depends_on:
+      - test-app
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    depends_on:
+      - test-app
+
+volumes:
+  agent_data:
+  prometheus_data:
